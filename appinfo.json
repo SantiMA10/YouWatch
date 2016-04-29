@@ -3,39 +3,50 @@
     "capabilities": [
         "configurable"
     ],
-    "companyName": "darksanti@gmail.com",
+    "companyName": "SantiMA10",
     "longName": "YouWatch",
     "projectType": "pebblejs",
     "resources": {
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
-                "type": "png"
+                "type": "bitmap"
             },
             {
                 "file": "images/logo_splash.png",
                 "name": "IMAGE_LOGO_SPLASH",
-                "type": "png"
+                "type": "bitmap"
             },
             {
                 "file": "images/tile_splash.png",
                 "name": "IMAGE_TILE_SPLASH",
-                "type": "png"
+                "type": "bitmap"
             },
             {
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/icono.bmp",
+                "menuIcon": true,
+                "name": "IMAGES_ICONO_BMP",
+                "type": "bitmap"
             }
         ]
     },
+    "sdkVersion": "3",
     "shortName": "YouWatch",
-    "uuid": "6d31a16f-9d6e-4164-a2b7-7b1b1ff5094c",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "4d63a2c4-6e17-47f4-8a0b-ca32de287313",
     "versionCode": 1,
     "versionLabel": "2.0",
     "watchapp": {
+        "hiddenApp": true,
         "watchface": true
     }
 }

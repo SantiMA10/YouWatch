@@ -5,92 +5,95 @@
  */
 
 var UI = require('ui');
-var Vector2 = require('vector2');
-var Settings = require('settings');
 var ajax = require('ajax');
-var wind = new UI.Window();
-var channel = Settings.data('channel');
+var Settings = require('settings');
+var Accel = require('ui/accel');
+var win = new UI.Window();
+var vec = require('vector2');
+
+Accel.init();
+
+// Construct URL
+var channel = Settings.option('channel') || 'TrutOficial';
+var init = Settings.option('init') || false;
+var subs_count = 0;
+
+if(init === undefined){
+  var card = new UI.Card({
+    title: 'Config me!',
+    body: 'Open the setting and enter your channel name'
+  });
+  card.show();
+}
 
 var info = new UI.Text({ 
-  position: new Vector2(0, 0), 
-  size: new Vector2(140, 168),
+  position: new vec(0, 0), 
+  size: new vec(140, 168),
   font: 'gothic-18',
-  textAlign: 'left',
+  textAlign: 'center',
 });
+win.add(info);
 
-var getData = function (id){
-  ajax(
-    {
-      url: 'http://gdata.youtube.com/feeds/api/users/'+id,
-      type: 'xml'
-    },
-    function(data) {
-      console.log('Successfully fetched YouTube data!');
-      Settings.data('channel', {name : data.match(/<name>(.*?)<\/name>/)[1], 
-                                sus: data.match(/subscriberCount='(.*?)'/)[1],
-                                id: id});
-      channel = Settings.data('channel');
-      console.log(channel.name + " " + channel.sus);
-      info.text("Channel: " +channel.name + "\nSuscribers: " + channel.sus);
-    },
-    function(error) {
-      console.log('Failed fetching YouTube data: ' + error);
-    }
-  );
-};
-
-Settings.config(
-  { url: 'http://trut.es/pebble/config.html' },
-  function(e) {
-    console.log('closed configurable');
-
-    // Show the parsed response
-    getData(e.options.channel);
-    
-    wind.show();
-
-    // Show the raw response if parsing failed
-    if (e.failed) {
-      console.log(e.response);
-    }
-  }
-);
-
-var card = new UI.Card({
-  title: 'Hello!',
-  body: 'Open the config in your phone and enter your channel name.',
-});
-
-setInterval(function() { getData(channel.id); }, 900000);
-
-wind.add(info);
-
-var hora = new UI.TimeText({ 
-  position: new Vector2(0, 65), 
-  size: new Vector2(140, 168),
+var hour = new UI.TimeText({ 
+  position: new vec(0, 60), 
+  size: new vec(140, 168),
   text:'%I:%M %p',
   font: 'bitham-30-black',
   textAlign: 'center',
 });
-wind.add(hora);
+win.add(hour);
 
-var fecha = new UI.TimeText({ 
-  position: new Vector2(0, 125), 
-  size: new Vector2(140, 168),
+var date = new UI.TimeText({ 
+  position: new vec(0, 125), 
+  size: new vec(140, 168),
   text:'%d/%m/%y',
   font: 'gothic-24-bold',
   textAlign: 'center',
 });
-wind.add(fecha);
+win.add(date);
+win.show();
 
-wind.show();
+var load = function(){
+  channel = Settings.option('channel') || 'TrutOficial';
+  info.text('Reloading');
+  ajax(
+    {
+      url: 'https://www.googleapis.com/youtube/v3/channels?part=statistics&forUsername=' + channel + '&key={KEY}',
+      type: 'json'
+    },
+    function(data, status, request) {
+      subs_count = data.items[0].statistics.subscriberCount;
+      info.text(subs_count.toLocaleString('en-IN') + ' subs');
+    },
+    function(error, status, request) {
+      console.log('The ajax request failed: ' + error);
+      card = new UI.Card({
+        title: 'Error loading data',
+        body: ':('
+      });
+      card.show();
+    }
+  );
+};
+load();
 
-if(!channel){
-  console.log("not found" + channel);
-  card.show();
-  getData('TrutOficial');
-  channel = Settings.data('channel');
-}
-else{
-  info.text("Channel: " +channel.name + "\nSuscribers: " + channel.sus);
-}
+
+// Set a configurable with the open callback
+Settings.config(
+  { url: 'https://santima.xyz/YouWatchConfig/' },
+  function(e) {
+    Settings.option('init', true);
+    Settings.option('channel', e.options.channel);
+    load();
+    // Reset color to red before opening the webview
+  },
+  function(e) {
+    Settings.option('channel', e.options.channel);
+    load();
+  }
+);
+
+win.on('accelTap', function(e) {
+  console.log('realod');
+  load();
+});
