@@ -6,7 +6,7 @@
 
 ![pebble](https://cloud.githubusercontent.com/assets/7255298/14931827/dcb7de14-0e6e-11e6-9440-9cbd60b1c0f5.png)
 
-![YouWatch is available on the Pebble appstore](http://pblweb.com/badge/547b9c31fb0797aeb3000082/orange/small)
+[![YouWatch is available on the Pebble appstore](http://pblweb.com/badge/547b9c31fb0797aeb3000082/orange/small)](https://apps.getpebble.com/applications/547b9c31fb0797aeb3000082)
 
 ## English 🇬🇧
 ### Description
